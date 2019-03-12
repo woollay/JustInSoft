@@ -1,0 +1,15 @@
+<resources>
+    <!-- Base application theme. -->
+    <!--Theme.AppCompat.Light.DarkActionBar-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <!--<item name="colorPrimaryDark">@android:color/transparent</item>-->
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+    <!--自定义主题名称-->
+    <style name="AppTheme.NoTitle_FullScreen" parent="AppTheme">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">false</item>
+    </style>
+</resources>
