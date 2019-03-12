@@ -3,6 +3,7 @@ const webpack = require('webpack'); //webpack必要条件
 const HtmlWebpackPlugin = require('html-webpack-plugin'); //多页面生成视图插件
 const CleanWebpackPlugin = require('clean-webpack-plugin'); //清除工程目录插件
 const CompressionPlugin = require('compression-webpack-plugin'); //压缩插件
+const CopyWebpackPlugin = require('copy-webpack-plugin'); //复制文件插件
 
 module.exports = {
     //对象形式entry
@@ -86,7 +87,12 @@ if (process.env.NODE_ENV === "production") { //生产环境，启用兼容和js�
         }),
         new webpack.LoaderOptionsPlugin({
             minimize: true
-        }),
+        })
+    ]);
+};
+
+if (process.env.PLATFORM == "DEV") {
+    module.exports.plugins = (module.exports.plugins || []).concat([
         new CompressionPlugin({
             filename: "[path].gz[query]",
             algorithm: "gzip",
@@ -95,16 +101,23 @@ if (process.env.NODE_ENV === "production") { //生产环境，启用兼容和js�
             minRatio: 0.8,
         })
     ]);
-};
+}
 
 if (process.env.PLATFORM == "APP") {
     module.exports.output = {
-        path: path.resolve(__dirname, "./AppDist"),
+        path: path.resolve(__dirname, "../Android/app/src/main/assets"),
         publicPath: "",
         filename: "[name].js"
     };
-
-    module.exports.plugins.unshift(new CleanWebpackPlugin(["AppDist"]));
+    module.exports.plugins.unshift(new CleanWebpackPlugin(["./Android/app/src/main/assets"], {
+        root: "/Users/yoyo-studio/work/JustInSoft/hybird_android/", //根目录
+        verbose: true, //开启在控制台输出信息
+        dry: false //启用删除文件
+    }));
+    module.exports.plugins.unshift(new CopyWebpackPlugin([{
+        from: __dirname + "/src/assets", //源目录
+        to: "./assets", //目标目录
+    }]));
 }
 
 //DEV模式时，指定公共路径为当前路径
