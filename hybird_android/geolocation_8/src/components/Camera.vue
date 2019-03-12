@@ -1,7 +1,7 @@
 <template>
 	<div class="camera">
 		<div class="camera-title">Click following button to take a picture:</div>
-		<img src="button.png" @click="takePictures">
+		<img src="assets/button.png" @click="takePictures">
 		<div class="preview-img">
 			<div class="camera-title">Current photos is:</div>
 			<img :src="previewImg" v-if="previewImg!==''">

@@ -65,7 +65,7 @@ module.exports = {
         historyApiFallback: true,
         noInfo: true,
         overlay: true,
-        contentBase: path.resolve(__dirname, "./src/assets") //本地调试时，图片等资源对应的根路径
+        contentBase: path.resolve(__dirname, "./src/") //本地调试时，图片等资源对应的根路径
     },
     devtool: "#eval-source-map"
 };
@@ -91,7 +91,7 @@ if (process.env.NODE_ENV === "production") { //生产环境，启用兼容和js�
     ]);
 };
 
-if (process.env.PLATFORM == "DEV") {
+if (process.env.NODE_ENV === "production" && process.env.PLATFORM != "APP") {
     module.exports.plugins = (module.exports.plugins || []).concat([
         new CompressionPlugin({
             filename: "[path].gz[query]",
@@ -109,11 +109,13 @@ if (process.env.PLATFORM == "APP") {
         publicPath: "",
         filename: "[name].js"
     };
+    //此处需要清理的是此webpack外的文件路径，所以需要重新指定root路径，root路径和CleanWebpackPlugin中括号中的路径加一起为清理的目标路径
     module.exports.plugins.unshift(new CleanWebpackPlugin(["./Android/app/src/main/assets"], {
         root: "/Users/yoyo-studio/work/JustInSoft/hybird_android/", //根目录
         verbose: true, //开启在控制台输出信息
         dry: false //启用删除文件
     }));
+    //把图片资源从webpack路径下的assets拷贝至Android工程中的assets
     module.exports.plugins.unshift(new CopyWebpackPlugin([{
         from: __dirname + "/src/assets", //源目录
         to: "./assets", //目标目录
