@@ -3,6 +3,7 @@
 		<geo-location-component></geo-location-component>
 		<camera-component></camera-component>
 		<record-component></record-component>
+		<timeline></timeline>
 	</div>
 </template>
 
@@ -10,6 +11,8 @@
 	import GeoLocationComponent from "./GeoLocation";
 	import CameraComponent from "./Camera";
 	import RecordComponent from "./Record";
+	import Timeline from "./Timeline";
+
 	export default {
 		name: "Hybird-App",
 		data() {
@@ -18,7 +21,8 @@
 		components: {
 			GeoLocationComponent,
 			CameraComponent,
-			RecordComponent
+			RecordComponent,
+			Timeline
 		}
 	};
 </script>
