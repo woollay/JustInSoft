@@ -15,21 +15,12 @@
 
 			let node = this.$refs["timeline-table"];
 			console.log("timeline=" + JSON.stringify(node));
-
+			let start = 2000;
+			let len = 10;
+			let self = this;
 			let dataJson = {
 				timeline: {
-					data: [
-						"2002-01-01",
-						"2003-01-01",
-						"2004-01-01",
-						"2005-01-01",
-						"2006-01-01",
-						"2007-01-01",
-						"2008-01-01",
-						"2009-01-01",
-						"2010-01-01",
-						"2011-01-01"
-					],
+					data: self.getDataJson(start, len, 0),
 					label: {
 						formatter: function(s) {
 							return new Date(s).getFullYear();
@@ -37,8 +28,8 @@
 					}
 				}
 			};
-
-			let curPage = 2;
+			let limitPage = [1, 20];
+			let curPage = 10;
 			let callback = {
 				callback: (timeline, param) => {
 					let index = param.currentIndex;
@@ -46,44 +37,26 @@
 				},
 				last: (timeline, param) => {
 					let index = param.currentIndex;
-					if (curPage > 1) {
+					if (curPage > limitPage[0]) {
 						curPage -= 1;
-						dataJson.timeline.data = [
-							"1992-01-01",
-							"1993-01-01",
-							"1994-01-01",
-							"1995-01-01",
-							"1996-01-01",
-							"1997-01-01",
-							"1998-01-01",
-							"1999-01-01",
-							"2000-01-01",
-							"2001-01-01"
-						];
+						dataJson.timeline.data = self.getDataJson(start, len, -1);
 						let maxIndex = dataJson.timeline.data.length - 1;
 						dataJson.timeline.currentIndex = maxIndex;
 						timeline.update(dataJson);
+
+						start -= len;
 					}
 					console.log("-curPage:" + curPage + ",curIndex:" + index);
 				},
 				next: (timeline, param) => {
 					let index = param.currentIndex;
-					if (curPage < 3) {
+					if (curPage < limitPage[1]) {
 						curPage += 1;
-						dataJson.timeline.data = [
-							"2012-01-01",
-							"2013-01-01",
-							"2014-01-01",
-							"2015-01-01",
-							"2016-01-01",
-							"2017-01-01",
-							"2018-01-01",
-							"2019-01-01",
-							"2020-01-01",
-							"2021-01-01"
-						];
+						dataJson.timeline.data = self.getDataJson(start, len, 1);
 						dataJson.timeline.currentIndex = 0;
 						timeline.update(dataJson);
+
+						start += len;
 					}
 					console.log("+curPage:" + curPage + ",curIndex:" + index);
 				}
@@ -91,7 +64,16 @@
 
 			Timeline.makeTimeline(node, dataJson, callback);
 		},
-		methods: {}
+		methods: {
+			getDataJson: function(start, len, delta) {
+				let data = [];
+				for (let i = 0; i < len; i++) {
+					data[i] = start + i + delta * len + "-01-01";
+				}
+				console.log("current page:" + data);
+				return data;
+			}
+		}
 	};
 </script>
 <style scoped>
