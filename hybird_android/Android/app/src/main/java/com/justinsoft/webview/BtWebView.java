@@ -7,21 +7,12 @@ import com.justinsoft.util.LogUtil;
 
 import android.app.Activity;
 import android.content.Context;
-import android.graphics.Color;
-import android.graphics.drawable.ClipDrawable;
-import android.graphics.drawable.ColorDrawable;
-import android.net.http.SslError;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
-import android.webkit.SslErrorHandler;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebResourceResponse;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
-import android.widget.ProgressBar;
 
 /**
  * 复写webview，添加进度条显示效果
@@ -31,11 +22,7 @@ public class BtWebView extends WebView
     // 日志标记
     private static final String TAG = LogUtil.getClassTag(BtWebView.class);
     
-    private ProgressBar progressBar;
-    
-    // private Activity activity;
-    
-    private WebChromeClient webChromeClient;
+    private BtWebChromeClient webChromeClient;
     
     private JsCallback jsCallback;
     
@@ -47,11 +34,12 @@ public class BtWebView extends WebView
     public BtWebView(Context context, AttributeSet attrs)
     {
         super(context, attrs);
-        initProgressBar(context);
         
-        this.webChromeClient = new WebChromeClient();
+        this.webChromeClient = new BtWebChromeClient(context);
         setWebChromeClient(this.webChromeClient);
-        setWebViewClient(new WebViewClient());
+        this.webChromeClient.addProgressBar(this);
+        
+        setWebViewClient(new BtWebViewClient());
         initSettings();
     }
     
@@ -93,30 +81,6 @@ public class BtWebView extends WebView
     public void cropPicture(int resultCode)
     {
         this.webChromeClient.cropPicture(resultCode);
-    }
-    
-    @Override
-    protected void onScrollChanged(int l, int t, int oldl, int oldt)
-    {
-        super.onScrollChanged(l, t, oldl, oldt);
-    }
-    
-    private void initProgressBar(Context context)
-    {
-        this.progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
-        this.progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, dp2px(context, 3), 0, 0));
-        ClipDrawable drawable = new ClipDrawable(new ColorDrawable(Color.BLUE), Gravity.LEFT, ClipDrawable.HORIZONTAL);
-        this.progressBar.setProgressDrawable(drawable);
-        addView(this.progressBar);
-    }
-    
-    /**
-     * 方法描述：根据手机的分辨率从 dp 的单位 转成为 px(像素)
-     */
-    private int dp2px(Context context, float dpValue)
-    {
-        final float scale = context.getResources().getDisplayMetrics().density;
-        return (int)(dpValue * scale + 0.5f);
     }
     
     private void initSettings()
@@ -175,57 +139,6 @@ public class BtWebView extends WebView
         setScrollbarFadingEnabled(true);
         setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
         setDrawingCacheEnabled(true);
-    }
-    
-    /**
-     * 重载WebChromeClient，添加进度条
-     */
-    private class WebChromeClient extends BtWebChromeClient
-    {
-        @Override
-        public void onProgressChanged(android.webkit.WebView view, int newProgress)
-        {
-            if (newProgress == 100)
-            {
-                progressBar.setVisibility(GONE);
-            }
-            else
-            {
-                if (progressBar.getVisibility() == GONE)
-                {
-                    progressBar.setVisibility(VISIBLE);
-                }
-                progressBar.setProgress(newProgress);
-            }
-            super.onProgressChanged(view, newProgress);
-        }
-    }
-    
-    private class WebViewClient extends android.webkit.WebViewClient
-    {
-        public boolean shouldOverrideUrlLoading(WebView view, String url)
-        {
-            Log.i(TAG, "start to override url loading 0");
-            view.loadUrl(url);
-            return true;
-        }
-        
-        @Override
-        public void onReceivedHttpError(WebView view, WebResourceRequest request, WebResourceResponse errorResponse)
-        {
-            super.onReceivedHttpError(view, request, errorResponse);
-            Log.e(TAG, "failed to receive msg");
-        }
-        
-        @Override
-        public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error)
-        {
-            // 注意：super句话一定要删除，或者注释掉，否则又走handler.cancel() 默认的不支持https的了。
-            // super.onReceivedSslError(view, handler, error);
-            Log.e(TAG, "failed to receive ssl msg");
-            // 接受所有网站的证书
-            handler.proceed();
-        }
     }
     
     private void allowAcrossRequest(WebSettings webSettings)

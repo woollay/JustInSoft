@@ -8,22 +8,34 @@ import com.justinsoft.util.PictureUtil;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Color;
+import android.graphics.drawable.ClipDrawable;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
 import android.webkit.GeolocationPermissions;
 import android.webkit.JsResult;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.widget.AbsoluteLayout.LayoutParams;
+import android.widget.ProgressBar;
+
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
 
 public class BtWebChromeClient extends WebChromeClient
 {
     // 日志标记
     private static final String TAG = LogUtil.getClassTag(BtWebChromeClient.class);
+    
+    private ProgressBar progressBar;
     
     private Activity activity;
     
@@ -38,6 +50,16 @@ public class BtWebChromeClient extends WebChromeClient
     private ValueCallback<Uri[]> valueCallback;
     
     String path = Environment.getExternalStorageDirectory() + "";
+    
+    /**
+     * 构造方法
+     *
+     * @param context
+     */
+    public BtWebChromeClient(Context context)
+    {
+        initProgressBar(context);
+    }
     
     @Override
     public void onGeolocationPermissionsShowPrompt(String origin, GeolocationPermissions.Callback callback)
@@ -112,6 +134,34 @@ public class BtWebChromeClient extends WebChromeClient
         takePicture();
         return true;
     }
+
+    @Override
+    public void onProgressChanged(android.webkit.WebView view, int newProgress)
+    {
+        if (newProgress == 100)
+        {
+            progressBar.setVisibility(GONE);
+        }
+        else
+        {
+            if (progressBar.getVisibility() == GONE)
+            {
+                progressBar.setVisibility(VISIBLE);
+            }
+            progressBar.setProgress(newProgress);
+        }
+        super.onProgressChanged(view, newProgress);
+    }
+
+    /**
+     * 添加进度条
+     *
+     * @param webView
+     */
+    public void addProgressBar(WebView webView)
+    {
+        webView.addView(this.progressBar);
+    }
     
     /**
      * 拍照异步回调
@@ -150,7 +200,7 @@ public class BtWebChromeClient extends WebChromeClient
     
     /**
      * 开始裁剪照片
-     * 
+     *
      * @param resultCode
      */
     public void cropPicture(int resultCode)
@@ -167,7 +217,7 @@ public class BtWebChromeClient extends WebChromeClient
     
     /**
      * 绑定Activity
-     * 
+     *
      * @param activity
      */
     public void bind(Activity activity)
@@ -196,7 +246,7 @@ public class BtWebChromeClient extends WebChromeClient
     
     /**
      * 开始裁剪照片
-     * 
+     *
      * @param activity
      * @param cameraUri
      */
@@ -226,5 +276,22 @@ public class BtWebChromeClient extends WebChromeClient
         }
         oldValueCallback = null;
         valueCallback = null;
+    }
+    
+    private void initProgressBar(Context context)
+    {
+        this.progressBar = new ProgressBar(context, null, android.R.attr.progressBarStyleHorizontal);
+        this.progressBar.setLayoutParams(new LayoutParams(LayoutParams.MATCH_PARENT, dp2px(context, 3), 0, 0));
+        ClipDrawable drawable = new ClipDrawable(new ColorDrawable(Color.BLUE), Gravity.LEFT, ClipDrawable.HORIZONTAL);
+        this.progressBar.setProgressDrawable(drawable);
+    }
+    
+    /**
+     * 方法描述：根据手机的分辨率从 dp 的单位 转成为 px(像素)
+     */
+    private int dp2px(Context context, float dpValue)
+    {
+        final float scale = context.getResources().getDisplayMetrics().density;
+        return (int)(dpValue * scale + 0.5f);
     }
 }
