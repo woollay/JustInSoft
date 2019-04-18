@@ -4,6 +4,7 @@
 		<camera-component></camera-component>
 		<record-component></record-component>
 		<timeline></timeline>
+		<rocket></rocket>
 	</div>
 </template>
 
@@ -12,6 +13,7 @@
 	import CameraComponent from "./Camera";
 	import RecordComponent from "./Record";
 	import Timeline from "./Timeline";
+	import Rocket from "./Rocket";
 
 	export default {
 		name: "Hybird-App",
@@ -22,7 +24,8 @@
 			GeoLocationComponent,
 			CameraComponent,
 			RecordComponent,
-			Timeline
+			Timeline,
+			Rocket
 		}
 	};
 </script>
