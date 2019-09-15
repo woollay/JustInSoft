@@ -7,7 +7,7 @@
 > 什么是跨域：
 > 当一个请求 url 的协议、域名、端口三者之间任意一个与当前页面 url 不同即为跨域。
 
-举例 ：在自己的应用 html 中，需要访问微信或者新浪接口，这时浏览器就会提示跨域了。如下代码所示：在业务代码中访问网络地址来查询天气信息。
+举例：在自己的应用 html 中，需要访问微信或者新浪接口，这时浏览器就会提示跨域了。如下代码所示：在业务代码中访问网络地址来查询天气信息。
 
 ```javascript
 let url = 'http://t.weather.sojson.com/api/weather/city/101030100'
@@ -25,7 +25,7 @@ axios
 ```
 
 运行结果如下：
-![avatar](./temp/cross.png)
+![avatar](https://github.com/woollay/JustInSoft/tree/master/proxy/src/temp/cross.png)
 
 > 为什么会跨域:
 > 出于浏览器的同源策略限制。同源策略（SameOriginPolicy）是一种约定，它是浏览器最核心也最基本的安全功能，如果缺少了同源策略，则浏览器的正常功能可能都会受到影响。可以说 Web 是构建在同源策略基础之上的，浏览器只是针对同源策略的一种实现。同源策略会阻止一个域的 javascript 脚本和另外一个域的内容进行交互。所谓同源（即指在同一个域）就是两个页面具有相同的协议（protocol），主机（host）和端口号（port）。
@@ -73,7 +73,7 @@ axios
 ```
 
 运行结果如下：
-![avatar](./temp/nocross.png)
+![avatar](https://github.com/woollay/JustInSoft/tree/master/proxy/src/temp/nocross.png)
 
 3. 为了统一管理 url，保证前端可访问任意位置后端和第三方（后端可能部署在本地，也有可能部署在远端），则需要把所有访问的 IP 和端口配置成全局共享，且不会被 webpack 打包压缩。
    业务场景举例如下：
@@ -166,7 +166,7 @@ axios
 
 13. 删除 webpack.config.js 中的 proxy 配置。
 14. 通过地址栏访问 nginx 的监听地址:http://localhost（http默认端口是80，可以省略），效果如下：
-    ![avatar](./temp/proxynocross.png)
+    ![avatar](https://github.com/woollay/JustInSoft/tree/master/proxy/src/temp/proxynocross.png)
 
 ## 四. 总结
 
